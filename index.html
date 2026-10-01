@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeShare - Stories & Social Messaging</title>
+
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS Modules -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/stories.css">
+    <link rel="stylesheet" href="styles/messaging.css">
+    <link rel="stylesheet" href="styles/auth.css">
+</head>
+<body>
+
+    <div id="app" class="app-container">
+
+        <!-- Header Navigation Bar -->
+        <header class="app-header">
+            <div class="header-left">
+                <!-- Theme Switcher Slider -->
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="theme-slider">
+                        <input type="checkbox" id="theme-slider">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="theme-label" id="theme-label-text">Dark Mode</span>
+                </div>
+
+                <div class="brand-logo">
+                    <i class="fa-solid fa-circle-nodes brand-icon"></i>
+                    <span>VibeShare</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button class="btn-primary-sm" id="btn-header-new-story">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Story</span>
+                </button>
+
+                <!-- Profile Dropdown Menu Trigger -->
+                <div class="profile-menu-container">
+                    <button class="avatar-btn" id="btn-profile-dropdown">
+                        <img id="nav-avatar-img" src="" alt="Profile Avatar" class="avatar-img">
+                    </button>
+
+                    <div class="dropdown-menu hidden" id="profile-dropdown">
+                        <div class="dropdown-header">
+                            <p class="dropdown-name" id="dropdown-name-text">Display Name</p>
+                            <p class="dropdown-handle" id="dropdown-handle-text">@handle</p>
+                        </div>
+                        <ul class="dropdown-items">
+                            <li id="menu-item-profile"><i class="fa-regular fa-user"></i> View Profile</li>
+                            <li id="menu-item-settings"><i class="fa-solid fa-gear"></i> Account Settings</li>
+                            <li class="divider"></li>
+                            <li id="menu-item-logout" class="danger-text"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Workspace -->
+        <main class="app-main">
+
+            <!-- Stories Top Bar Tray -->
+            <section class="stories-tray-section">
+                <div class="section-title-row">
+                    <span class="section-title">Recent Stories</span>
+                    <span class="section-action" id="action-create-story">+ New Story</span>
+                </div>
+                <div class="stories-scroll-container" id="stories-tray">
+                    <!-- Dynamic Stories rendered by JS -->
+                </div>
+            </section>
+
+            <!-- Navigation Tabs -->
+            <nav class="nav-tabs">
+                <button class="tab-btn active" data-tab="feed" id="tab-btn-feed">
+                    <i class="fa-solid fa-newspaper"></i> <span>Feed</span>
+                </button>
+                <button class="tab-btn" data-tab="messages" id="tab-btn-messages">
+                    <i class="fa-solid fa-paper-plane"></i> <span>Chat</span>
+                    <span class="badge hidden" id="chat-unread-badge">0</span>
+                </button>
+                <button class="tab-btn" data-tab="friends" id="tab-btn-friends">
+                    <i class="fa-solid fa-user-group"></i> <span>Network</span>
+                </button>
+            </nav>
+
+            <!-- Tab 1: Feed View -->
+            <div class="tab-content active" id="view-feed">
+                <div class="hero-banner">
+                    <div class="hero-content">
+                        <h3>Share your moment!</h3>
+                        <p>Post a 24h story visible to Everyone, Mutual Friends, or Close Friends.</p>
+                        <button class="btn-secondary-sm" id="btn-hero-story">Create Story</button>
+                    </div>
+                    <i class="fa-solid fa-camera-retro hero-icon"></i>
+                </div>
+
+                <div class="feed-posts-list" id="feed-posts-container">
+                    <!-- Posts populated by JS -->
+                </div>
+            </div>
+
+            <!-- Tab 2: Messaging View -->
+            <div class="tab-content hidden" id="view-messages">
+                <div class="messaging-workspace">
+                    <!-- Left Sidebar Chat Threads -->
+                    <div class="chat-sidebar" id="chat-sidebar">
+                        <div class="chat-filter-bar">
+                            <button class="filter-chip active" data-filter="all">All</button>
+                            <button class="filter-chip" data-filter="friends">Friends</button>
+                            <button class="filter-chip" data-filter="requests">Requests</button>
+                        </div>
+                        <div class="chat-threads-list" id="chat-threads-container">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right Conversation Pane -->
+                    <div class="chat-conversation-pane hidden" id="chat-conversation-pane">
+                        <div class="chat-header" id="chat-header">
+                            <!-- Active Partner Header loaded by JS -->
+                        </div>
+
+                        <!-- Banner for Differentiated Messaging -->
+                        <div class="chat-notice-banner hidden" id="chat-type-banner">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Follower Message Request. Media and voice attachments are restricted until accepted.</span>
+                        </div>
+
+                        <div class="chat-messages-log" id="chat-messages-log">
+                            <!-- Chat log rendered by JS -->
+                        </div>
+
+                        <div class="chat-input-area" id="chat-input-area">
+                            <!-- Dynamic input controls by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Friends / Network View -->
+            <div class="tab-content hidden" id="view-friends">
+                <div class="network-header">
+                    <h3>Social Connections</h3>
+                    <p class="subtitle">Manage relationships and Close Friends list</p>
+                </div>
+                <div class="network-list" id="network-users-list">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- AUTHENTICATION & ONBOARDING MODAL -->
+    <div class="modal-backdrop" id="auth-modal">
+        <div class="modal-card auth-card">
+            
+            <!-- Auth Step 1: Login / Register Form -->
+            <div id="auth-step-form" class="auth-step">
+                <div class="auth-header">
+                    <div class="auth-logo-badge"><i class="fa-solid fa-circle-nodes"></i></div>
+                    <h2 id="auth-title">Welcome to VibeShare</h2>
+                    <p id="auth-subtitle">Connect, share stories, and message instantly.</p>
+                </div>
+
+                <div class="auth-toggle-bar">
+                    <button id="btn-auth-mode-login" class="toggle-btn active">Login</button>
+                    <button id="btn-auth-mode-register" class="toggle-btn">Register</button>
+                </div>
+
+                <form id="auth-form" class="auth-form-fields">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="auth-email-input" placeholder="alex@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="auth-password-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" id="auth-submit-btn" class="btn-primary-block">Sign In</button>
+                </form>
+            </div>
+
+            <!-- Auth Step 2: Email Confirmation Simulation -->
+            <div id="auth-step-confirm" class="auth-step hidden text-center">
+                <div class="icon-pulse"><i class="fa-solid fa-envelope-open-text"></i></div>
+                <h3>Confirm Your Email</h3>
+                <p class="step-desc">We sent a verification code to <strong id="confirm-email-target">email@domain.com</strong></p>
+                
+                <div class="otp-container">
+                    <input type="text" id="otp-input" maxlength="6" value="849201" class="otp-field">
+                </div>
+
+                <button id="btn-verify-otp" class="btn-primary-block">Verify Code & Continue</button>
+            </div>
+
+            <!-- Auth Step 3: Choose Display Name & Setup Profile -->
+            <div id="auth-step-displayname" class="auth-step hidden text-center">
+                <div class="icon-avatar-badge"><i class="fa-solid fa-user-astronaut"></i></div>
+                <h3>Choose your display name</h3>
+                <p class="step-desc">Customize how friends and followers will see your profile.</p>
+
+                <div class="auth-form-fields">
+                    <div class="form-group text-left">
+                        <label>Display Name</label>
+                        <input type="text" id="onboard-display-name" placeholder="Alex Rivera" required>
+                    </div>
+                    <div class="form-group text-left">
+                        <label>Username Handle</label>
+                        <div class="input-prefix-wrapper">
+                            <span class="input-prefix">@</span>
+                            <input type="text" id="onboard-handle" placeholder="alexrivera" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btn-finish-onboarding" class="btn-primary-block">Complete Setup</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FULL SCREEN STORY VIEWER MODAL -->
+    <div class="modal-backdrop hidden" id="story-viewer-modal">
+        <div class="story-viewer-wrapper">
+            <div class="story-progress-bar-container" id="story-viewer-progress-bars">
+                <!-- Dynamically injected bars -->
+            </div>
+
+            <div class="story-viewer-header">
+                <div class="author-info">
+                    <img id="story-viewer-avatar" src="" class="author-avatar">
+                    <div class="author-text">
+                        <div class="name-row">
+                            <span id="story-viewer-username" class="author-name">User</span>
+                            <span id="story-viewer-privacy-tag" class="privacy-tag hidden">Close Friends</span>
+                        </div>
+                        <span id="story-viewer-timestamp" class="time-text">2h ago</span>
+                    </div>
+                </div>
+                <div class="viewer-actions">
+                    <button id="btn-story-analytics" class="icon-circle-btn hidden"><i class="fa-solid fa-chart-simple"></i></button>
+                    <button id="btn-close-story-viewer" class="icon-circle-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <div class="story-media-stage">
+                <img id="story-viewer-media" src="" class="story-img">
+                <div id="story-text-overlay" class="story-text-overlay hidden">Caption overlay</div>
+
+                <div class="nav-touch-zone left" id="story-touch-left"></div>
+                <div class="nav-touch-zone right" id="story-touch-right"></div>
+            </div>
+
+            <div class="story-viewer-footer">
+                <input type="text" id="story-comment-input" placeholder="Send reply..." class="story-reply-input">
+                <button id="btn-send-story-comment" class="icon-circle-btn"><i class="fa-solid fa-paper-plane"></i></button>
+                <button id="btn-like-story" class="icon-circle-btn"><i class="fa-solid fa-heart"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STORY ANALYTICS MODAL -->
+    <div class="modal-backdrop hidden" id="story-analytics-modal">
+        <div class="modal-card sm-card">
+            <div class="modal-header">
+                <h4>Story Insights</h4>
+                <button class="close-btn" id="btn-close-analytics"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="analytics-stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number emerald" id="analytics-view-count">0</span>
+                    <span class="stat-label">Views</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number pink" id="analytics-like-count">0</span>
+                    <span class="stat-label">Likes</span>
+                </div>
+            </div>
+            <div class="viewers-list-header">Viewers</div>
+            <div class="viewers-list" id="analytics-viewers-list">
+                <!-- Viewer records -->
+            </div>
+        </div>
+    </div>
+
+    <!-- STORY CREATOR MODAL -->
+    <div class="modal-backdrop hidden" id="story-creator-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Create New Story</h3>
+                <button class="close-btn" id="btn-close-story-creator"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="form-fields">
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" id="story-input-url" placeholder="https://images.unsplash.com/...">
+                </div>
+                <div class="form-group">
+                    <label>Caption Overlay</label>
+                    <input type="text" id="story-input-caption" placeholder="Add text overlay...">
+                </div>
+                <div class="form-group">
+                    <label>Audience Privacy</label>
+                    <div class="privacy-selector-grid">
+                        <label class="privacy-option">
+                            <input type="radio" name="story-privacy" value="followers" checked>
+                            <div class="option-box">
+                                <i class="fa-solid fa-globe"></i>
+                                <span>Followers</span>
+                            </div>
+                        </label>
+                        <label class="privacy-option">
+                            <input type="radio" name="story-privacy" value="friends">
+                            <div class="option-box">
+                                <i class="fa-solid fa-user-group"></i>
+                                <span>Friends</span>
+                            </div>
+                        </label>
+                        <label class="privacy-option">
+                            <input type="radio" name="story-privacy" value="close">
+                            <div class="option-box close-friend-box">
+                                <i class="fa-solid fa-star"></i>
+                                <span>Close Friends</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <button id="btn-publish-story" class="btn-primary-block">Publish Story</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCOUNT SETTINGS MODAL -->
+    <div class="modal-backdrop hidden" id="settings-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Account Settings</h3>
+                <button class="close-btn" id="btn-close-settings"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="form-fields">
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="settings-input-name">
+                </div>
+                <div class="form-group">
+                    <label>Avatar Picture URL</label>
+                    <input type="text" id="settings-input-avatar">
+                </div>
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="settings-input-bio" rows="3"></textarea>
+                </div>
+                <button id="btn-save-settings" class="btn-primary-block">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE VIEW MODAL -->
+    <div class="modal-backdrop hidden" id="profile-modal">
+        <div class="modal-card sm-card text-center">
+            <button class="close-btn absolute-top-right" id="btn-close-profile"><i class="fa-solid fa-xmark"></i></button>
+            <img id="profile-card-avatar" src="" class="profile-card-img">
+            <h3 id="profile-card-name" class="profile-card-title">Name</h3>
+            <p id="profile-card-handle" class="profile-card-handle">@handle</p>
+            <p id="profile-card-bio" class="profile-card-bio">Bio details</p>
+
+            <div class="profile-stats-bar">
+                <div class="stat-col">
+                    <span id="profile-stat-stories-num" class="num">0</span>
+                    <span class="label">Stories</span>
+                </div>
+                <div class="stat-col">
+                    <span id="profile-stat-friends-num" class="num">0</span>
+                    <span class="label">Friends</span>
+                </div>
+                <div class="stat-col">
+                    <span id="profile-stat-followers-num" class="num">0</span>
+                    <span class="label">Followers</span>
+                </div>
+            </div>
+
+            <button id="btn-edit-profile-from-card" class="btn-secondary-block">Edit Profile</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules Execution Chain -->
+    <script src="js/state.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/stories.js"></script>
+    <script src="js/messaging.js"></script>
+    <script src="js/friends.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
