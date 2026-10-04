@@ -1,81 +1,70 @@
-const Friends = {
-    init() {
-        this.bindEvents();
-        this.renderNetwork();
-    },
+window.Friends = {
+  async renderDashboard() {
+    const main = document.getElementById('app-content');
+    main.style.gridTemplateColumns = '280px 1fr 320px';
 
-    bindEvents() {
-        document.getElementById('menu-item-profile').addEventListener('click', () => this.openProfileCard());
-        document.getElementById('menu-item-settings').addEventListener('click', () => this.openSettings());
-        document.getElementById('btn-close-profile').addEventListener('click', () => this.closeProfileCard());
-        document.getElementById('btn-close-settings').addEventListener('click', () => this.closeSettings());
-        document.getElementById('btn-save-settings').addEventListener('click', () => this.saveSettings());
-        document.getElementById('btn-edit-profile-from-card').addEventListener('click', () => {
-            this.closeProfileCard();
-            this.openSettings();
-        });
-    },
+    const users = await State.getAll('users');
+    const otherUsers = users.filter(u => u.id !== State.currentUser.id);
+    const stories = await State.getAll('stories');
 
-    renderNetwork() {
-        const container = document.getElementById('network-users-list');
-        container.innerHTML = '';
+    main.innerHTML = `
+      <!-- Left Sidebar: Friends & Followers -->
+      <aside>
+        <h3>Connections</h3>
+        <div class="text-muted text-sm mb-4">Click to open chat</div>
+        <div id="connections-list">
+          ${otherUsers.map(u => `
+            <div class="header-profile mb-4" onclick="Messaging.selectChat('${u.id}', 'FRIEND')">
+              <div class="avatar">${u.displayName.charAt(0)}</div>
+              <div>
+                <div><strong>${u.displayName}</strong></div>
+                <span class="badge badge-friend">Friend</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </aside>
 
-        State.networkUsers.forEach(user => {
-            let badgeText = 'Follower';
-            if (user.relationship === 'close_friend') badgeText = '★ Close Friend';
-            else if (user.relationship === 'friend') badgeText = 'Mutual Friend';
+      <!-- Center Content: Stories -->
+      <section>
+        <div class="stories-bar">
+          <div class="story-ring-item" onclick="Stories.openCreateModal()">
+            <div class="story-create-btn"><i class="fa-solid fa-plus"></i></div>
+            <span class="text-sm">Add Story</span>
+          </div>
+          ${stories.map(s => `
+            <div class="story-ring-item" onclick="Stories.openViewer('${s.id}')">
+              <div class="ring-wrapper ${s.audience === 'CLOSE_FRIENDS' ? 'close-friend' : ''}">
+                <div class="avatar">${s.caption.charAt(0)}</div>
+              </div>
+              <span class="text-sm">Story</span>
+            </div>
+          `).join('')}
+        </div>
 
-            const html = `
-                <div style="padding:12px; border:1px solid var(--border-color); border-radius:var(--radius-md); background:var(--bg-card); display:flex; justify-between; align-items:center; margin-bottom:10px;">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <img src="${user.avatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-                        <div>
-                            <div style="font-weight:700; font-size:13px;">${user.name} <span style="font-size:10px; opacity:0.7;">(${badgeText})</span></div>
-                            <div style="font-size:11px; color:var(--text-secondary);">@${user.handle}</div>
-                        </div>
-                    </div>
-                    <button class="btn-secondary-sm" onclick="App.switchTab('messages'); Messaging.openConversation('${user.id}')">Chat</button>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-        });
-    },
+        <div id="chat-window-container">
+          <div class="messaging-card text-center" style="justify-content: center; color: var(--text-secondary);">
+            Select a contact to start messaging
+          </div>
+        </div>
+      </section>
 
-    openProfileCard() {
-        document.getElementById('profile-dropdown').classList.add('hidden');
-        document.getElementById('profile-card-avatar').src = State.currentUser.avatar;
-        document.getElementById('profile-card-name').textContent = State.currentUser.displayName;
-        document.getElementById('profile-card-handle').textContent = '@' + State.currentUser.handle;
-        document.getElementById('profile-card-bio').textContent = State.currentUser.bio;
-
-        document.getElementById('profile-modal').classList.remove('hidden');
-    },
-
-    closeProfileCard() {
-        document.getElementById('profile-modal').classList.add('hidden');
-    },
-
-    openSettings() {
-        document.getElementById('profile-dropdown').classList.add('hidden');
-        document.getElementById('settings-input-name').value = State.currentUser.displayName;
-        document.getElementById('settings-input-avatar').value = State.currentUser.avatar;
-        document.getElementById('settings-input-bio').value = State.currentUser.bio;
-
-        document.getElementById('settings-modal').classList.remove('hidden');
-    },
-
-    closeSettings() {
-        document.getElementById('settings-modal').classList.add('hidden');
-    },
-
-    saveSettings() {
-        State.currentUser.displayName = document.getElementById('settings-input-name').value || State.currentUser.displayName;
-        State.currentUser.avatar = document.getElementById('settings-input-avatar').value || State.currentUser.avatar;
-        State.currentUser.bio = document.getElementById('settings-input-bio').value || State.currentUser.bio;
-
-        Auth.updateUserUI();
-        this.closeSettings();
-        Stories.renderTray();
-        Stories.renderFeed();
-    }
+      <!-- Right Sidebar: Close Friends & Suggestions -->
+      <aside>
+        <h3>Close Friends</h3>
+        <p class="text-muted text-sm mb-4">Exclusive story circle</p>
+        <div>
+          ${otherUsers.slice(0, 2).map(u => `
+            <div class="header-profile mb-4">
+              <div class="avatar">${u.displayName.charAt(0)}</div>
+              <div>
+                <div><strong>${u.displayName}</strong></div>
+                <span class="badge badge-close">Close Friend</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </aside>
+    `;
+  }
 };
